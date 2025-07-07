@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .choice-button {
+            transition: transform 0.2s ease-in-out;
+        }
+        .choice-button:hover {
+            transform: scale(1.1);
+        }
+        .choice-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex flex-col items-center justify-center text-white font-sans">
+    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center mb-4">Rock Paper Scissors</h1>
+        <p class="text-center text-gray-300 mb-6">Choose your move!</p>
+        
+        <div class="flex justify-center space-x-4 mb-6">
+            <button class="js-rock choice-button" aria-label="Choose Rock">
+                <img class="w-20 h-20 rounded-full border-2 border-yellow-400" src="rock.png" alt="Rock">
+            </button>
+            <button class="js-paper choice-button" aria-label="Choose Paper">
+                <img class="w-20 h-20 rounded-full border-2 border-yellow-400" src="paper.png" alt="Paper">
+            </button>
+            <button class="js-scissor choice-button" aria-label="Choose Scissors">
+                <img class="w-20 h-20 rounded-full border-2 border-yellow-400" src="scissor.png" alt="Scissors">
+            </button>
+        </div>
+
+        <div class="text-center mb-4">
+            <p class="font-semibold">Score</p>
+            <p>You: <span class="js-player-score">0</span> | Computer: <span class="js-computer-score">0</span></p>
+        </div>
+
+        <div class="text-center">
+            <p class="font-semibold">Result</p>
+            <div class="js-result flex justify-center items-center min-h-[120px]"></div>
+        </div>
+
+        <button class="js-reset bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-full mt-4 w-full hover:bg-yellow-500 transition duration-200">Reset Game</button>
+    </div>
+
+    <script>
+        const state = {
+            playerScore: 0,
+            computerScore: 0
+        };
+
+        const elements = {
+            rock: document.querySelector('.js-rock'),
+            paper: document.querySelector('.js-paper'),
+            scissor: document.querySelector('.js-scissor'),
+            result: document.querySelector('.js-result'),
+            playerScore: document.querySelector('.js-player-score'),
+            computerScore: document.querySelector('.js-computer-score'),
+            reset: document.querySelector('.js-reset')
+        };
+
+        function getComputerChoice() {
+            const choices = ['rock', 'paper', 'scissor'];
+            return choices[Math.floor(Math.random() * choices.length)];
+        }
+
+        function playRound(playerSelection, computerSelection) {
+            if (playerSelection === computerSelection) {
+                return {
+                    outcome: 'tie',
+                    message: `<img class="mx-auto w-20 h-20 rounded-full border-2 border-yellow-400" src="tie.webp" alt="Tie"><p class="text-yellow-500 font-bold" > It's a tie!</p>`
+                };
+            }
+
+            const winConditions = {
+                rock: 'scissor',
+                scissor: 'paper',
+                paper: 'rock'
+            };
+
+            if (winConditions[playerSelection] === computerSelection) {
+                state.playerScore++;
+                return {
+                    outcome: 'win',
+                    message: `<img class="mx-auto w-20 h-20 rounded-full border-2 border-yellow-400" src="win.webp" alt="Win"><p class="text-green-600 font-bold"> You win!</p> ${playerSelection} beats ${computerSelection}.`
+                };
+            } else {
+                state.computerScore++;
+                return {
+                    outcome: 'lose',
+                    message: `<img class="mx-auto w-20 h-20 rounded-full border-2 border-yellow-400" src="lose.webp" alt="Lose"><p class="text-red-600 font-bold" > You lose! </p>${computerSelection} beats ${playerSelection}.`
+                };
+            }
+        }
+
+        function updateDisplay(result) {
+            elements.result.innerHTML = result.message;
+            elements.playerScore.textContent = state.playerScore;
+            elements.computerScore.textContent = state.computerScore;
+        }
+
+        function resetGame() {
+            state.playerScore = 0;
+            state.computerScore = 0;
+            elements.result.innerHTML = '';
+            elements.playerScore.textContent = '0';
+            elements.computerScore.textContent = '0';
+        }
+
+        elements.rock.addEventListener('click', () => {
+            const result = playRound('rock', getComputerChoice());
+            updateDisplay(result);
+        });
+
+        elements.paper.addEventListener('click', () => {
+            const result = playRound('paper', getComputerChoice());
+            updateDisplay(result);
+        });
+
+        elements.scissor.addEventListener('click', () => {
+            const result = playRound('scissor', getComputerChoice());
+            updateDisplay(result);
+        });
+
+        elements.reset.addEventListener('click', resetGame);
+    </script>
+    <p class="underline"><a href="">Click Here for the developer</a></p>
+</body>
+</html>
